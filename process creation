@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    printf("Executing command using system()\n");
+    int status = system("ls -l"); // Execute 'ls -l' command
+
+    if (status == -1) {
+        perror("system call failed");
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
