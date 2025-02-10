@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void writeToFile(const char *filename) {
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        perror("Error opening file for writing");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < 10; i++) {
+        fprintf(file, "Line %d: This is a sample line.\n", i + 1);
+    }
+
+    if (fclose(file) != 0) {
+        perror("Error closing the file after writing");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void readFromFile(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening file for reading");
+        exit(EXIT_FAILURE);
+    }
+
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        printf("%s", buffer);
+    }
+
+    if (fclose(file) != 0) {
+        perror("Error closing the file after reading");
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main() {
+    const char *filename = "sequential_file.txt";
+
+    writeToFile(filename);
+    readFromFile(filename);
+    return 0;
+}
+
