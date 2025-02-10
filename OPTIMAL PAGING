@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define FRAME_SIZE 3 // Number of frames in memory
+
+// Function to find the optimal page to replace
+int findOptimalPage(int pages[], int pageCount, int frame[], int frameCount, int currentIndex) {
+    int farthest = currentIndex;
+    int pageToReplace = -1;
+
+    for (int i = 0; i < frameCount; i++) {
+        int j;
+        for (j = currentIndex; j < pageCount; j++) {
+            if (frame[i] == pages[j]) {
+                if (j > farthest) {
+                    farthest = j;
+                    pageToReplace = i;
+                }
+                break;
+            }
+        }
+        // If the page is not found in future references
+        if (j == pageCount) {
+            return i; // Replace this page
+        }
+    }
+    return (pageToReplace == -1) ? 0 : pageToReplace; // Default to first frame if all are used
+}
+
+// Function to implement optimal page replacement
+void optimalPageReplacement(int pages[], int pageCount) {
+    int frame[FRAME_SIZE];
+    int pageFaults = 0;
+
+    // Initialize frames to -1
+    for (int i = 0; i < FRAME_SIZE; i++) {
+        frame[i] = -1;
+    }
+
+    for (int i = 0; i < pageCount; i++) {
+        int j;
+        int pageFound = 0;
+
+        // Check if the page is already in a frame
+        for (j = 0; j < FRAME_SIZE; j++) {
+            if (frame[j] == pages[i]) {
+                pageFound = 1;
+                break;
+            }
+        }
+
+        // If page is not found, we have a page fault
+        if (!pageFound) {
+            int pageToReplace = findOptimalPage(pages, pageCount, frame, FRAME_SIZE, i);
+            frame[pageToReplace] = pages[i];
+            pageFaults++;
+            printf("Page fault occurred: %d replaced with %d\n", frame[pageToReplace], pages[i]);
+        }
+    }
+
+    printf("Total page faults: %d\n", pageFaults);
+}
+
+int main() {
+    int pages[] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2};
+    int pageCount = sizeof(pages) / sizeof(pages[0]);
+
+    // Error handling for page count
+    if (pageCount <= 0) {
+        fprintf(stderr, "Error: No pages to process.\n");
+        return EXIT_FAILURE;
+    }
+
+    optimalPageReplacement(pages, pageCount);
+    return EXIT_SUCCESS;
+}
