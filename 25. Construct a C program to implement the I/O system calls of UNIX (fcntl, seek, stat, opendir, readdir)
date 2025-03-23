@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main() {
+    int fd;
+    char buffer[100];
+    
+    fd = open("example.txt", O_RDONLY);
+    if (fd == -1) {
+        perror("Error opening file");
+        return EXIT_FAILURE;
+    }
+
+    // Move the file pointer to the 10th byte
+    off_t offset = lseek(fd, 10, SEEK_SET);
+    if (offset == -1) {
+        perror("Error seeking");
+        close(fd);
+        return EXIT_FAILURE;
+    }
+
+    // Read from the file
+    ssize_t bytesRead = read(fd, buffer, sizeof(buffer) - 1);
+    if (bytesRead == -1) {
+        perror("Error reading file");
+        close(fd);
+        return EXIT_FAILURE;
+    }
+
+    buffer[bytesRead] = '\0'; // Null-terminate the string
+    printf("Data read from file: %s\n", buffer);
+
+    // Close the file descriptor
+    close(fd);
+    return EXIT_SUCCESS;
+}
