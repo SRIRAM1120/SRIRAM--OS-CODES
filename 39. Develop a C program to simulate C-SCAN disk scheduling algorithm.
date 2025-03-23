@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void cscan(int arr[], int size, int head, int total_cylinders) {
+    int seek_sequence[size + 1];
+    int distance, seek_count = 0, cur_track;
+    
+    // Sort the request array
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+
+    // Service the requests from the head to the end
+    for (int i = 0; i < size; i++) {
+        if (arr[i] >= head) {
+            cur_track = arr[i];
+            seek_sequence[seek_count++] = cur_track;
+            distance = abs(cur_track - head);
+            seek_count += distance;
+            head = cur_track;
+        }
+    }
+
+    // Jump to the beginning of the disk
+    head = 0;
+    seek_sequence[seek_count++] = head;
+
+    // Service the requests from the beginning to the head
+    for (int i = 0; i < size; i++) {
+        if (arr[i] < head) {
+            cur_track = arr[i];
+            seek_sequence[seek_count++] = cur_track;
+            distance = abs(cur_track - head);
+            seek_count += distance;
+            head = cur_track;
+        }
+    }
+
+    printf("C-SCAN Seek Sequence: ");
+    for (int i = 0; i < seek_count; i++) {
+        printf("%d ", seek_sequence[i]);
+    }
+    printf("\nTotal Seek Count: %d\n", seek_count);
+}
+
+int main() {
+    int requests[] = {176, 79, 34, 60, 92, 11, 41, 114};
+    int size = sizeof(requests) / sizeof(requests[0]);
+    int head = 50; // Initial head position
+    int total_cylinders = 200; // Total number of cylinders
+
+    cscan(requests, size, head, total_cylinders);
+    return 0;
+}
