@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    const char *command = "mkdir -p ParentDir/ChildDir";
+
+    // Execute the system command to create directories
+    int result = system(command);
+    if (result == -1) {
+        perror("Error creating directories");
+        return EXIT_FAILURE;
+    }
+
+    printf("Directories created successfully using system command.\n");
+    return EXIT_SUCCESS;
+}
