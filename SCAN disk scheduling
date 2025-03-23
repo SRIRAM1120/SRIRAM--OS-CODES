@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void scan(int arr[], int size, int head, int direction) {
+    int seek_sequence[100], index = 0, distance, total_head_movement = 0;
+    int i;
+
+    // Sort the request array
+    for (i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] > arr[j]) {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+
+    // Find the position of the head
+    int pos;
+    for (i = 0; i < size; i++) {
+        if (arr[i] >= head) {
+            pos = i;
+            break;
+        }
+    }
+
+    // Service requests in the specified direction
+    if (direction == 1) { // Moving towards the end
+        for (i = pos; i < size; i++) {
+            seek_sequence[index++] = arr[i];
+            distance = abs(head - arr[i]);
+            total_head_movement += distance;
+            head = arr[i];
+        }
+        // Move to the end of the disk
+        total_head_movement += abs(head - 199);
+        head = 199; // Assuming 199 is the end of the disk
+        for (i = pos - 1; i >= 0; i--) {
+            seek_sequence[index++] = arr[i];
+            distance = abs(head - arr[i]);
+            total_head_movement += distance;
+            head = arr[i];
+        }
+    } else { // Moving towards the beginning
+        for (i = pos - 1; i >= 0; i--) {
+            seek_sequence[index++] = arr[i];
+            distance = abs(head - arr[i]);
+            total_head_movement += distance;
+            head = arr[i];
+        }
+        // Move to the beginning of the disk
+        total_head_movement += abs(head - 0);
+        head = 0; // Assuming 0 is the start of the disk
+        for (i = pos; i < size; i++) {
+            seek_sequence[index++] = arr[i];
+            distance = abs(head - arr[i]);
+            total_head_movement += distance;
+            head = arr[i];
+        }
+    }
+
+    printf("Total head movement: %d\n", total_head_movement);
+    printf("Seek Sequence: ");
+    for (i = 0; i < index; i++) {
+        printf("%d ", seek_sequence[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int requests[] = {176, 79, 34, 60, 92, 11, 41, 114};
+    int size = sizeof(requests) / sizeof(requests[0]);
+    int head = 50; // Initial head position
+    int direction = 1; // 1 for right, 0 for left
+
+    scan(requests, size, head, direction);
+    return 0;
+}
