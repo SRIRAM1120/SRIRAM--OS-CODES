@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Block {
+    char data[256];
+    struct Block* next;
+} Block;
+
+typedef struct File {
+    Block* head;
+    Block* tail;
+} File;
+
+File* createFile() {
+    File* file = (File*)malloc(sizeof(File));
+    file->head = NULL;
+    file->tail = NULL;
+    return file;
+}
+
+void addBlock(File* file, const char* data) {
+    Block* newBlock = (Block*)malloc(sizeof(Block));
+    strcpy(newBlock->data, data);
+    newBlock->next = NULL;
+
+    if (file->head == NULL) {
+        file->head = newBlock;
+        file->tail = newBlock;
+    } else {
+        file->tail->next = newBlock;
+        file->tail = newBlock;
+    }
+}
+
+void displayFile(File* file) {
+    Block* current = file->head;
+    while (current != NULL) {
+        printf("%s -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    File* myFile = createFile();
+    addBlock(myFile, "Block 1");
+    addBlock(myFile, "Block 2");
+    addBlock(myFile, "Block 3");
+
+    displayFile(myFile);
+    return 0;
+}
