@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+
+int main() {
+    int fileDescriptor;
+    const char *additionalText = "Appending this line to the file.\n";
+
+    // Open the file for appending
+    fileDescriptor = open("example.txt", O_WRONLY | O_APPEND);
+    if (fileDescriptor < 0) {
+        perror("Error opening file");
+        return 1;
+    }
+
+    // Write additional text to the file
+    if (write(fileDescriptor, additionalText, strlen(additionalText)) < 0) {
+        perror("Error writing to file");
+        close(fileDescriptor);
+        return 1;
+    }
+
+    // Close the file
+    close(fileDescriptor);
+    return 0;
+}
