@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_BLOCKS 10
+
+typedef struct {
+    int blockNumber;
+    char data[256];
+} FileBlock;
+
+typedef struct {
+    FileBlock blocks[MAX_BLOCKS];
+} FileSystem;
+
+void initializeFileSystem(FileSystem *fs) {
+    for (int i = 0; i < MAX_BLOCKS; i++) {
+        fs->blocks[i].blockNumber = i;
+        snprintf(fs->blocks[i].data, sizeof(fs->blocks[i].data), "Data for block %d", i);
+    }
+}
+
+void displayFileSystem(FileSystem *fs) {
+    for (int i = 0; i < MAX_BLOCKS; i++) {
+        printf("Block %d: %s\n", fs->blocks[i].blockNumber, fs->blocks[i].data);
+    }
+}
+
+int main() {
+    FileSystem fs;
+    initializeFileSystem(&fs);
+    displayFileSystem(&fs);
+    return 0;
+}
