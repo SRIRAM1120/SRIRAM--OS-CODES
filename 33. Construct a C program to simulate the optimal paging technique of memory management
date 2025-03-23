@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define FRAME_SIZE 3
+#define PAGE_SIZE 10
+
+void optimalPageReplacement(int pages[], int n) {
+    int frame[FRAME_SIZE];
+    int pageFaults = 0;
+
+    for (int i = 0; i < FRAME_SIZE; i++) {
+        frame[i] = -1; // Initialize frames
+    }
+
+    for (int i = 0; i < n; i++) {
+        int j, flag = 0;
+
+        // Check if page is already in frame
+        for (j = 0; j < FRAME_SIZE; j++) {
+            if (frame[j] == pages[i]) {
+                flag = 1;
+                break;
+            }
+        }
+
+        // If page is not found, we have a page fault
+        if (flag == 0) {
+            int farthest = i + 1, index = -1;
+
+            // Find the page to replace
+            for (j = 0; j < FRAME_SIZE; j++) {
+                int k;
+                for (k = i + 1; k < n; k++) {
+                    if (frame[j] == pages[k]) {
+                        if (k > farthest) {
+                            farthest = k;
+                            index = j;
+                        }
+                        break;
+                    }
+                }
+                // If page is not found in future, replace it
+                if (k == n) {
+                    index = j;
+                    break;
+                }
+            }
+
+            frame[index] = pages[i]; // Replace the page
+            pageFaults++;
+        }
+    }
+
+    printf("Total Page Faults: %d\n", pageFaults);
+}
+
+int main() {
+    int pages[] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3};
+    int n = sizeof(pages) / sizeof(pages[0]);
+    optimalPageReplacement(pages, n);
+    return 0;
+}
